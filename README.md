@@ -43,3 +43,7 @@ NOTE: The default PLAID_ENV is `development` if you're using a sandbox for testi
 | PLAID_ENV           | false    | development  | sandbox                           | [Plaid](https://plaid.com/docs/#create-link-token)                           |
 | PLAID_PRODUCTS      | false    | transactions | transactions,auth,identity,income | [Plaid](https://plaid.com/docs/#create-link-token)                           |
 | PLAID_COUNTRY_CODES | false    | US           | US,CA,IR                          | [Plaid](https://plaid.com/docs/#create-link-token)                           |  |
+| PUSHOVER_TOKEN       | false    | ---          | a2xyz9d8fh0v5d247vc190ddcs4l2a    | [Pushover](https://pushover.net/api) notifications after `import`            |
+| PUSHOVER_USER_KEY    | false    | ---          | u3xyz9d8fh0v5d247vc190ddcs4l2a    | [Pushover](https://pushover.net/api) notifications after `import`            |
+
+If `PUSHOVER_TOKEN` and `PUSHOVER_USER_KEY` are both set, `actualplaid import` sends a separate Pushover notification for each synced account that had new transactions imported. Accounts with zero new transactions are skipped, and if Pushover isn't configured, notifications are silently skipped.
