@@ -363,6 +363,24 @@ module.exports = async (command, flags) => {
 
     } else if (command === "ls") {
         printSyncedAccounts();
+
+    } else if (command === "test-notify") {
+        if (!appConfig.PUSHOVER_TOKEN || !appConfig.PUSHOVER_USER_KEY) {
+            console.log("Pushover is not configured. Set PUSHOVER_TOKEN and PUSHOVER_USER_KEY to enable notifications.");
+            process.exitCode = 1;
+        } else {
+            console.log("Sending test notification to Pushover...");
+            const result = await sendPushoverNotification(appConfig, {
+                title: "actualplaid test notification",
+                message: "If you're seeing this, actualplaid is able to send you Pushover notifications.",
+            });
+            if (result.ok) {
+                console.log("Test notification sent successfully. Check your Pushover devices.");
+            } else {
+                console.log("Failed to send test notification:", result.error || `HTTP ${result.statusCode} ${result.responseBody}`);
+                process.exitCode = 1;
+            }
+        }
     }
     process.exit();
 };

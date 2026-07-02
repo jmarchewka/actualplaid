@@ -1,14 +1,16 @@
 const https = require("https");
 
 /**
- * Sends a notification via Pushover. Silently no-ops if Pushover isn't configured,
- * and logs (rather than throws) on failure, since a notification issue shouldn't fail an import.
+ * Sends a notification via Pushover.
+ * Never throws: resolves with a result object describing what happened, so
+ * callers can either ignore it (fire-and-forget) or inspect it (e.g. a test command).
  * @param {{PUSHOVER_TOKEN: string, PUSHOVER_USER_KEY: string}} appConfig
  * @param {{title: string, message: string}} notification
+ * @returns {Promise<{ok: boolean, skipped: boolean, statusCode?: number, responseBody?: string, error?: string}>}
  */
 function sendPushoverNotification(appConfig, { title, message }) {
     if (!appConfig.PUSHOVER_TOKEN || !appConfig.PUSHOVER_USER_KEY) {
-        return Promise.resolve();
+        return Promise.resolve({ ok: false, skipped: true });
     }
 
     const body = new URLSearchParams({
@@ -30,18 +32,20 @@ function sendPushoverNotification(appConfig, { title, message }) {
                 },
             },
             (response) => {
-                response.on("data", () => {});
+                let responseBody = "";
+                response.on("data", (chunk) => { responseBody += chunk; });
                 response.on("end", () => {
-                    if (response.statusCode >= 400) {
-                        console.error(`Failed to send Pushover notification: HTTP ${response.statusCode}`);
+                    const ok = response.statusCode < 400;
+                    if (!ok) {
+                        console.error(`Failed to send Pushover notification: HTTP ${response.statusCode} ${responseBody}`);
                     }
-                    resolve();
+                    resolve({ ok, skipped: false, statusCode: response.statusCode, responseBody });
                 });
             }
         );
         request.on("error", (e) => {
             console.error("Failed to send Pushover notification:", e.message);
-            resolve();
+            resolve({ ok: false, skipped: false, error: e.message });
         });
         request.write(body);
         request.end();

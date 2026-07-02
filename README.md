@@ -26,6 +26,7 @@ NOTE: The default PLAID_ENV is `development` if you're using a sandbox for testi
       --account, -a   The account to import, ex: --account="My Checking"
       --since, -s     The start date after which transactions should be imported. Defaults to beginning of current month, format: yyyy-MM-dd, ex: --since=2020-05-28
     config           Print the location of actualplaid the config file
+    test-notify      Send a test Pushover notification to verify PUSHOVER_TOKEN/PUSHOVER_USER_KEY are configured correctly
     --version        Print the version of actualplaid being used
 
   Examples

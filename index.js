@@ -15,6 +15,7 @@ const cli = meow(
       --since, -s    The start date after which transactions should be imported. Defaults to beginning of current month, format: yyyy-MM-dd, ex: --since=2020-05-28
     config           Print the location of actualplaid the config file
     check            Compare the Actual Budger balance to the synced accounts
+    test-notify      Send a test Pushover notification to verify PUSHOVER_TOKEN/PUSHOVER_USER_KEY are configured correctly
     --version        Print the version of actualplaid being used
 
 
